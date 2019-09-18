@@ -41,6 +41,14 @@ class Database
     # run_again
   end
 
-  
+  def insert_employee(emp_id,name,address,phone,department,present)
+    begin
+      @client.query("INSERT INTO employees VALUES('#{emp_id}','#{name}','#{address}','#{phone}','#{department}','#{present}') ")
+      # run_again
+    rescue => e
+      puts "Error in Adding Employee!"
+      puts e.message
+    end
+  end
 
 end #end_of_class
