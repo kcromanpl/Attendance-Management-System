@@ -24,7 +24,12 @@ class Database
   #listing the employee records
   def list_employee
     #array for CRUD operation (update & delete)
-    @result_set = @client.query("SELECT * FROM employees")
+    begin
+      @result_set = @client.query("SELECT * FROM employees")
+    rescue =>e
+      puts "Listing Failed - Database Error"
+      puts e.message;
+    end
 
     @update_set = Array.new
     @result_set.each do |row|
@@ -42,12 +47,12 @@ class Database
   end
 
   def insert_employee(emp_id,name,address,phone,department,present)
-    
+
     begin
       @client.query("INSERT INTO employees VALUES('#{emp_id}','#{name}','#{address}','#{phone}','#{department}','#{present}') ")
       # run_again
     rescue => e
-      puts "Error in Adding Employee!"
+      puts "Insert Failed - Database Error!"
       puts e.message
     end
   end
@@ -60,6 +65,44 @@ class Database
       # run_again
     else
       puts"Employee '#{delete}' not found"
+      # run_again
+    end
+  end
+
+  def update_employee(update)
+    if @update_set.include?(update) ;binding.pry
+      print "What do You want to update ? : "
+      puts "\n1.Employee Id\n\n2.Employee Name\n\n3. Adress\n\n4. Phone Number\n\n5. Department\n\n6. Present"
+      print ("Enter Your Selection (1/2/3/4/5/6): ")
+      action = gets.chomp.to_i
+      case action
+        when 1
+          column = "emp_id";
+        when 2
+          column = "name";
+        when 3
+          column = "address";
+        when 4
+          column = "phone";
+        when 5
+          column = "department";
+        when 6
+          column = "present";
+        else
+          puts "Invalid Selection"
+          # run_again
+      end
+      print "Enter the New value : "; value = gets.chomp;
+      begin
+        @client.query("UPDATE employees SET #{column} = '#{value}' WHERE emp_id = '#{update}'")
+      rescue => e
+        puts "Update Failed - Database Error"
+        puts e.message
+      end
+      puts "Employee '#{update}' Updated"
+      # run_again
+    else
+      puts"Employee '#{update}' not found"
       # run_again
     end
   end

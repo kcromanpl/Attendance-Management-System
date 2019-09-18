@@ -30,13 +30,20 @@ class Attendance
     puts "Deleting Employee Details"
     print "Enter the Employee id,you want to delete: "; delete = gets.chomp.to_i
     @client.delete_employee(delete) 
-  end  
+  end
+  
+  #Updating Employee Information
+  def update
+    puts "Updating Employee Details"
+    print "Enter the Employee id,you want to update: "; update = gets.chomp.to_i
+    @client.update_employee(update)
+  end
 
 
 end #end_of_class
 a = Attendance.new
 a.list
 # a.insert
-a.delete
+# a.delete
+a.update
 a.list
-
