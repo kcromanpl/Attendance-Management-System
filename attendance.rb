@@ -4,6 +4,8 @@ require './database_connect'
 class Attendance
   def initialize
     #initializing connection
-    @client = Database.create_con
+    @client = Database.new
   end 
 end
+Attendance.new
+
