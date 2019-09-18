@@ -1,7 +1,6 @@
 require 'mysql2'
 require 'pry'
 
-
 class Database
   def initialize
    #initializes the Mysql connection 
@@ -13,7 +12,7 @@ class Database
         name VARCHAR(30) NOT NULL, 
         address VARCHAR(30) NOT NULL, 
         phone VARCHAR(20) NOT NULL, 
-        depatment VARCHAR(20) NOT NULL, 
+        department VARCHAR(20) NOT NULL, 
         present TINYINT(1) NOT NULL)
         ")
     rescue => e
@@ -21,4 +20,27 @@ class Database
       puts e.message
     end
   end
+
+  #listing the employee records
+  def list_employee
+    #array for CRUD operation (update & delete)
+    @result_set = @client.query("SELECT * FROM employees")
+
+    @update_set = Array.new
+    @result_set.each do |row|
+      @update_set<<row['emp_id']
+    end
+    puts ("Employee List")
+    
+    puts "|Employee ID \t|\t Name \t|\t Address \t|\t Phone \t\t\t|\t Department \t| \t Present \t|"
+    puts "-----------------------------------------------------------------------------------------------------------------------------------------"
+    @result_set.each_with_index do |value,index|
+      print "|\t #{value['emp_id']} \t|\t #{value['name']} \t|\t #{value['address']} \t|\t #{value['phone']} \t|\t #{value['department']} \t|\t #{value['present']} \t\t|"
+     print "\n"
+    end
+    # run_again
+  end
+
+  
+
 end #end_of_class
