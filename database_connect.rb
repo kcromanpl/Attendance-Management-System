@@ -21,6 +21,26 @@ class Database
     end
   end
 
+  def employee_account_check(emp_id)
+    #array for CRUD operation (update & delete)
+    begin
+      @result_set = @client.query("SELECT * FROM employees")
+      @update_set = Array.new
+      @result_set.each do |row|
+       @update_set<<row['emp_id']
+    end
+    rescue => e
+      puts "Account Check Failed - Database Error!"
+      puts e.message
+    end
+    if (@update_set.include?(emp_id))
+      puts "Passed"
+      # pin_check
+    else
+      puts "Account Not Found"
+      # account_check
+    end
+  end
   #listing the employee records
   def list_employee
     #array for CRUD operation (update & delete)

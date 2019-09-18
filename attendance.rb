@@ -6,6 +6,15 @@ class Attendance
   #initializing connection
     @client = Database.new
   end
+
+  #checks if account is in database
+  def account_check
+    puts "\nWELCOME !!! RUBY ATTENDANCE MANAGEMENT SYSTEM !!!"
+    print("Enter Your Account number: ")
+    emp_id = gets.chomp.to_i;
+    @client.employee_account_check(emp_id)
+  end
+
   #CRUD oprations for Employee if Account & Pin Matched
   def access
     puts "\n1.List of Employees\n\n2. Add Employees\n\n3. Update Employee Information\n\n4. Delete Employee"
@@ -61,4 +70,4 @@ class Attendance
 
 end #end_of_class
 a = Attendance.new
-a.access
+a.account_check
