@@ -3,8 +3,27 @@ require './database_connect'
 
 class Attendance
   def initialize
-    #initializing connection
+  #initializing connection
     @client = Database.new
+  end
+  #CRUD oprations for Employee if Account & Pin Matched
+  def access
+    puts "\n1.List of Employees\n\n2. Add Employees\n\n3. Update Employee Information\n\n4. Delete Employee"
+    print ("Enter Your Selection (1/2/3/4): ")
+    action = gets.chomp.to_i
+      case action
+        when 1
+          list
+        when 2
+          insert
+        when 3
+          update
+        when 4
+          delete
+        else
+          puts "Invalid Selection"
+          # run_again
+      end
   end
   
   #listing the Employee information in the database
@@ -25,7 +44,7 @@ class Attendance
     @client.insert_employee(emp_id,name,address,phone,department,present);
   end
   
-  #Deleting Employee
+  #Deleting Employee records
   def delete
     puts "Deleting Employee Details"
     print "Enter the Employee id,you want to delete: "; delete = gets.chomp.to_i
@@ -42,8 +61,4 @@ class Attendance
 
 end #end_of_class
 a = Attendance.new
-a.list
-# a.insert
-# a.delete
-a.update
-a.list
+a.access

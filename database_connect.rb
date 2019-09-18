@@ -30,13 +30,11 @@ class Database
       puts "Listing Failed - Database Error"
       puts e.message;
     end
-
     @update_set = Array.new
     @result_set.each do |row|
       @update_set<<row['emp_id']
     end
     puts ("Employee List")
-    
     puts "|Employee ID \t|\t Name \t|\t Address \t|\t Phone \t\t\t|\t Department \t| \t Present \t|"
     puts "-----------------------------------------------------------------------------------------------------------------------------------------"
     @result_set.each_with_index do |value,index|
@@ -45,9 +43,9 @@ class Database
     end
     # run_again
   end
-
+  
+  #inserting Employee details in the information
   def insert_employee(emp_id,name,address,phone,department,present)
-
     begin
       @client.query("INSERT INTO employees VALUES('#{emp_id}','#{name}','#{address}','#{phone}','#{department}','#{present}') ")
       # run_again
@@ -56,9 +54,9 @@ class Database
       puts e.message
     end
   end
-
+  
+  #Deleting Employee records
   def delete_employee(delete)
-
     if @update_set.include?(delete)
       @client.query("DELETE FROM employees where emp_id = '#{delete}'")
       puts "Employee '#{delete}' Deleted"
@@ -68,9 +66,10 @@ class Database
       # run_again
     end
   end
-
+  
+  #Updating Employee Information
   def update_employee(update)
-    if @update_set.include?(update) ;binding.pry
+    if @update_set.include?(update)
       print "What do You want to update ? : "
       puts "\n1.Employee Id\n\n2.Employee Name\n\n3. Adress\n\n4. Phone Number\n\n5. Department\n\n6. Present"
       print ("Enter Your Selection (1/2/3/4/5/6): ")
