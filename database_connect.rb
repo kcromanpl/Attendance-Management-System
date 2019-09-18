@@ -42,12 +42,25 @@ class Database
   end
 
   def insert_employee(emp_id,name,address,phone,department,present)
+    
     begin
       @client.query("INSERT INTO employees VALUES('#{emp_id}','#{name}','#{address}','#{phone}','#{department}','#{present}') ")
       # run_again
     rescue => e
       puts "Error in Adding Employee!"
       puts e.message
+    end
+  end
+
+  def delete_employee(delete)
+
+    if @update_set.include?(delete)
+      @client.query("DELETE FROM employees where emp_id = '#{delete}'")
+      puts "Employee '#{delete}' Deleted"
+      # run_again
+    else
+      puts"Employee '#{delete}' not found"
+      # run_again
     end
   end
 
