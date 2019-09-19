@@ -7,6 +7,7 @@ class Attendance
     #initializes the Mysql connection
     begin
       @client = Database.create_con
+      @client_method = Database.new
       @empclass = Employee.new(@client)
     rescue => e
       puts "Error connecting to database"
@@ -78,7 +79,7 @@ class Attendance
     when 2
       list_pin
     when 3
-      list_employee_time
+      list_time
     when 4
       search
     when 5
@@ -113,12 +114,7 @@ class Attendance
 
   #listing the Employee information in the database
   def list
-    begin
-      @result_set = @client.query("SELECT * FROM employees")
-    rescue => e
-      puts "Listing Failed - Database Error"
-      puts e.message
-    end
+    @client_method.list_employee
     #array for CRUD operation (update & delete)
     @update_set = Array.new
     @result_set.each do |row|
@@ -156,17 +152,12 @@ class Attendance
 
   #listing employee_pin from Admin account
   def list_pin
-    begin
-      @emp_pin_set = @client.query("SELECT * FROM employees_pin")
-    rescue => e
-      puts "Listing Failed - Database Error"
-      puts e.message
-    end
+    emp_pin_set = @client_method.list_pin_employee #database_connect
     puts ("Employee Pin List")
 
     puts "|Employee ID \t|\t Pin \t|"
     puts "---------------------------------"
-    @emp_pin_set.each_with_index do |value, index|
+    emp_pin_set.each_with_index do |value, index|
       print "|\t #{value["emp_id"]} \t|\t #{value["pin"]} \t|"
       print "\n"
     end
@@ -174,18 +165,13 @@ class Attendance
   end
 
   #listing employee_pin from Admin account
-  def list_employee_time
-    begin
-      @emp_pin_set = @client.query("SELECT * FROM employees_time")
-    rescue => e
-      puts "Listing Failed - Database Error"
-      puts e.message
-    end
+  def list_time
+    emp_time_set = @client_method.list_time_employee #database_connect
     puts ("Employee Time List")
 
     puts "|\tTime ID|\tEmployee ID|\tDate \t\t|\t\t Arrival Time\t\t|\t\tDepart Time\t\t|"
     puts "---------------------------------"
-    @emp_pin_set.each_with_index do |value, index|
+    emp_time_set.each_with_index do |value, index|
       print "|\t #{value["time_id"]} \t|\t #{value["emp_id"]} \t|\t #{value["date"]} \t|\t #{value["arrival_time"]} \t|\t #{value["depart_time"]} \t|"
       print "\n"
     end
@@ -202,28 +188,21 @@ class Attendance
     print "Enter Department "; department = gets.chomp
     print "Enter Present (0/1) "; present = gets.chomp.to_i
     print "Enter Pin "; pin = gets.chomp.to_i
-    begin
-      # binding.pry
-      @client.query("INSERT INTO employees VALUES('#{new_emp_id}','#{name}','#{address}','#{phone}','#{department}','#{present}') ")
-      @client.query("INSERT INTO employees_pin VALUES(7,'#{new_emp_id}','#{pin}') ")
-    rescue => e
-      puts "Insert Failed - Database Error!"
-      puts e.message
-    end
+    @client_method.insert_employee(new_emp_id,name,address,phone,department,present,pin); #database_connect
     run_again
   end
 
   #Deleting Employee
   def delete
     puts "Deleting Employee Details"
-    print "Enter the Employee id,you want to delete: "; @delete = gets.chomp.to_i
+    print "Enter the Employee id,you want to delete: "; delete = gets.chomp.to_i
 
-    if @update_set.include?(@delete)
-      @client.query("DELETE FROM employees where emp_id = '#{@delete}'")
-      puts "Employee '#{@delete}' Deleted"
+    if @update_set.include?(delete)
+      @client_method.delete_employee(delete)  #database_connect
+      puts "Employee '#{delete}' Deleted"
       run_again
     else
-      puts "Employee '#{@delete}' not found"
+      puts "Employee '#{delete}' not found"
       run_again
     end
   end
@@ -231,41 +210,36 @@ class Attendance
   #Updating Employee Information
   def update
     puts "Updating Employee Details"
-    print "Enter the Employee id,you want to update: "; @update = gets.chomp.to_i
+    print "Enter the Employee id,you want to update: "; update = gets.chomp.to_i
 
-    if @update_set.include?(@update)
+    if @update_set.include?(update)
       print "What do You want to update ? : "
       puts "\n1.Employee Id\n\n2.Employee Name\n\n3. Adress\n\n4. Phone Number\n\n5. Department\n\n6. Present"
       print ("Enter Your Selection (1/2/3/4/5/6): ")
       action = gets.chomp.to_i
       case action
       when 1
-        @column = "emp_id"
+        column = "emp_id"
       when 2
-        @column = "Name"
+        column = "Name"
       when 3
-        @column = "Address"
+        column = "Address"
       when 4
-        @column = "Phone"
+        column = "Phone"
       when 5
-        @column = "Department"
+        column = "Department"
       when 6
-        @column = "Present"
+        column = "Present"
       else
         puts "Invalid Selection"
         run_again
       end
-      print "Enter the New value : "; @value = gets.chomp
-      begin
-        @client.query("UPDATE employees SET #{@column} = '#{@value}' WHERE emp_id = '#{@update}'")
-      rescue => e
-        puts "Update Failed - Database Error"
-        puts e.message
-      end
-      puts "Employee '#{@update}' Updated"
+      print "Enter the New value : "; value = gets.chomp
+      @client_method.update_employee(column,value,update) #database_conect
+      puts "Employee '#{update}' Updated"
       run_again
     else
-      puts "Employee '#{@update}' not found"
+      puts "Employee '#{update}' not found"
       run_again
     end
   end
