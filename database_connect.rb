@@ -1,13 +1,15 @@
-require 'mysql2'
-require 'pry'
+require "mysql2"
+require "pry"
 
 class Database
   def self.create_con
     Mysql2::Client.new(:host => "localhost", :username => "Roman", :password => "Roman123", :database => "employees_reports")
   end
+
   def initialize
-    @client = Mysql2::Client.new(:host => "localhost", :username => "Roman", :password => "Roman123", :database => "tests")
-    @client.query("
+    begin
+      @client = Mysql2::Client.new(:host => "localhost", :username => "Roman", :password => "Roman123", :database => "employees_reports")
+      @client.query("
       CREATE TABLE IF NOT EXISTS employees(
       emp_id INT PRIMARY KEY,
       name VARCHAR(30) NOT NULL, 
@@ -35,7 +37,12 @@ class Database
         FOREIGN KEY(emp_id) REFERENCES employees(emp_id) on delete cascade on update cascade)
         ")
     rescue => e
-    puts "Error connecting to database"
-    puts e.message
+      puts "Error connecting to database"
+      puts e.message
+    end
+  end
+
+  def list_employees
+    @result_set = @client.query("SELECT * FROM employees")
   end
 end
