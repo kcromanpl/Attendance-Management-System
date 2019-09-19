@@ -1,6 +1,6 @@
 require 'mysql2'
 require './database_connect'
-require './employee'
+# require './employee'
 
 class Attendance
   def initialize
