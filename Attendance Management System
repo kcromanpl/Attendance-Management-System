@@ -1,0 +1,47 @@
+Attendance Management System
+
+1. List Of Features
+
+Employee’s login side ==> Sign in for Time In and Time Out 
+
+Admin Panel 		==> view the monthly attendance report, CRUD Employees, Manage Overtime, deductions 
+
+	- manage employee details like email,phone number,address,birthday
+	- track employee leaves and presents in current month.
+	- Calculate employee salary. 
+	- check how many leave taken this year,month,week
+
+
+	create table Employees(
+      emp_id int not null primary key,
+      Name varchar(30) not null,
+      Address varchar(30) not null,
+      Phone varchar(20) not null,
+      Department varchar(20) not null,
+      Present TINYINT(1) not null);"
+
+      insert into Employees values(1, "Roman", "Lubhoo", "+977 - 9843256987", "Intern",1)
+
+     create table Emp_time(
+        time_id int primary key,
+        emp_id int,
+        Date date,
+        arrival_time datetime,
+        depart_time datetime,
+        foreign key(emp_id) references Employees(emp_id) on delete cascade on update cascade);
+ insert into employees values(1,'Administrator','Administrator','admin@admin.com','Manager',1);
+
+insert into employees values(2,'Roman','Lubhoo','kcromanpl@gmail.com','Intern',1);
+
+insert into employees values(3,'Asmin','Patan','asmin@gmail.com','Developer',0);
+
+insert into employees_pin values(1,1,1);
+Query OK, 1 row affected (0.01 sec)
+
+insert into employees_pin values(2,2,10);
+Query OK, 1 row affected (0.00 sec)
+
+insert into employees_pin values(3,3,11);
+Query OK, 1 row affected (0.00 sec)
+
+insert into employees_time values (1,1,2019-09-19,2019-09-19 21:16:21,2019-09-19 21:18:30);

@@ -3,9 +3,9 @@ require "pry"
 require "./database_connect"
 
 class Employee
-  def initialize()
+  def initialize(db)
     #initializing database connection
-    @client = Database.new
+    @client = db
   end
 
   #choosing employee login or logout
@@ -33,26 +33,21 @@ class Employee
     arrival = Time.now
     arrival_time = arrival.strftime("%Y-%m-%d %H:%M:%S")
 
-    @client.login_employee(@emp_id,date,arrival_time) #database_connect
-    
-    puts "** SUCCESS : Employee id: #{@emp_id} | Arrival time #{arrival_time} ***"  
+    @client.login_employee(@emp_id, date, arrival_time) #database_connect
+
+    puts "** SUCCESS : Employee id: #{@emp_id} | Arrival time #{arrival_time} ***"
   end
 
   #logout section for employee
   def logout
-    check_set = @client.query("SELECT arrival_time FROM employees_time where emp_id='#{@emp_id}'")
+    check_set = @client.logout_employee(@emp_id)
     # binding.pry
     if (check_set.size != 0)
       date = Date.today
       depart = Time.now
       depart_time = depart.strftime("%Y-%m-%d %H:%M:%S")
-      begin
-        @client.query("UPDATE employees_time SET depart_time ='#{depart_time}' WHERE emp_id = '#{@emp_id}'")
-        puts "** SUCCESS : Employee id: #{@emp_id} | Departure time #{depart_time} ***"
-      rescue => e
-        puts "INSERT UNSUCCESSFUL - DATABASE ERROR"
-        puts e.message
-      end
+
+      @client.logout_check_employee(@emp_id, depart_time)  #database_connect
     else
       puts "Login Entry Not Found"
     end

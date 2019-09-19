@@ -6,11 +6,10 @@ class Attendance
   def initialize
     #initializes the Mysql connection
     begin
-      # @client = Database.create_con
       @client_method = Database.new
-      @empclass = Employee.new
+      @empclass = Employee.new(@client_method)
     rescue => e
-      puts "Error connecting to database"
+      puts "CONNECTION UNSUCCESSFUL - DATABASE ERROR"
       puts e.message
     end
   end
@@ -23,8 +22,9 @@ class Attendance
     @result_set.each do |row|
       @update_set << row["emp_id"]
     end
-
-    puts "\nWELCOME !!! RUBY ATTENDANCE MANAGEMENT SYSTEM !!!\n"
+    puts "\n************************************************************"
+    puts "\tWELCOME !!! RUBY ATTENDANCE MANAGEMENT SYSTEM !!!"
+    puts "************************************************************\n"
     print("Enter Your Account number: ")
     @emp_id = gets.chomp.to_i
     if (@update_set.include?(@emp_id))
@@ -37,7 +37,7 @@ class Attendance
 
   #checks if pin matches the database
   def pin_check
-   pin_set =  @client_method.pin_check_employee(@emp_id)
+    pin_set = @client_method.pin_check_employee(@emp_id)
     pin_set.each do |i|
       @pin = i["pin"]
     end
@@ -59,7 +59,7 @@ class Attendance
 
   #CRUD oprations for Employee if Account & Pin Matched
   def access
-    puts "\n1.List of Employees\n\n2. List employees Pin\n\n3. List employees Time\n\n4. Search for Employee\n\n5. Add Employees\n\n6. Update Employee Information\n\n7. Delete Employee\n\n8. Exit"
+    puts "\t1.List of Employees\n\n\t2. List employees Pin\n\n\t3. List employees Time\n\n\t4. Search for Employee\n\n\t5. Add Employees\n\n\t6. Update Employee Information\n\n\t7. Delete Employee\n\n\t8. Exit\n\n"
     print ("Enter Your Selection (1/2/3/4/5/6): ")
     action = gets.chomp.to_i
     case action
@@ -110,10 +110,10 @@ class Attendance
       @update_set << row["emp_id"]
     end
     puts ("Employee List")
-    puts "|Employee ID \t|\t Name \t|\t Address \t|\t Phone \t\t\t|\t Department \t| \t Present \t|"
+    puts "|Employee ID \t|\t Name \t|\t Address \t|\t Email \t\t\t|\t Department \t| \t Present \t|"
     puts "-----------------------------------------------------------------------------------------------------------------------------------------"
     @result_set.each_with_index do |value, index|
-      print "|\t #{value["emp_id"]} \t|\t #{value["name"]} \t|\t #{value["address"]} \t|\t #{value["phone"]} \t|\t #{value["department"]} \t|\t #{value["present"]} \t\t|"
+      print "|\t #{value["emp_id"]} \t|\t #{value["name"]} \t|\t #{value["address"]} \t|\t #{value["email"]} \t|\t #{value["department"]} \t|\t #{value["present"]} \t\t|"
       print "\n"
     end
     run_again
@@ -124,11 +124,11 @@ class Attendance
     print ("Enter Employee name to search: "); search = gets.chomp
     puts ("Employee List with Search value: #{search}")
     flag = 0
-    puts "|Employee ID \t|\t Name \t|\t Address \t|\t Phone \t\t\t|\t Department \t| \t Present \t|"
+    puts "|Employee ID \t|\t Name \t|\t Address \t|\t Email \t\t\t|\t Department \t| \t Present \t|"
     puts "-----------------------------------------------------------------------------------------------------------------------------------------"
     @result_set.each_with_index do |value, index|
       if value["name"].casecmp(search) == 0
-        print "|\t #{value["emp_id"]} \t|\t #{value["name"]} \t|\t #{value["address"]} \t|\t #{value["phone"]} \t|\t #{value["department"]} \t|\t #{value["present"]} \t\t|"
+        print "|\t #{value["emp_id"]} \t|\t #{value["name"]} \t|\t #{value["address"]} \t|\t #{value["email"]} \t|\t #{value["department"]} \t|\t #{value["present"]} \t\t|"
         print "\n"
         flag += 1
       end
@@ -159,7 +159,7 @@ class Attendance
     puts ("Employee Time List")
 
     puts "|\tTime ID|\tEmployee ID|\tDate \t\t|\t\t Arrival Time\t\t|\t\tDepart Time\t\t|"
-    puts "---------------------------------"
+    puts "----------------------------------------------------------------------------------------------------------------------------------------"
     emp_time_set.each_with_index do |value, index|
       print "|\t #{value["time_id"]} \t|\t #{value["emp_id"]} \t|\t #{value["date"]} \t|\t #{value["arrival_time"]} \t|\t #{value["depart_time"]} \t|"
       print "\n"
@@ -171,13 +171,28 @@ class Attendance
   def insert
     puts "Enter Employee Details"
     print "Enter Employee ID: "; new_emp_id = gets.chomp.to_i
-    print "Enter Name "; name = gets.chomp
-    print "Enter Address "; address = gets.chomp
-    print "Enter Phone "; phone = gets.chomp
-    print "Enter Department "; department = gets.chomp
-    print "Enter Present (0/1) "; present = gets.chomp.to_i
-    print "Enter Pin "; pin = gets.chomp.to_i
-    @client_method.insert_employee(new_emp_id, name, address, phone, department, present, pin);  #database_connect
+    print "Enter Name: "; name = gets.chomp
+    print "Enter Address: "; address = gets.chomp
+    print "Enter Email: "; check_email = gets.chomp
+    #RegEx pattern matching for mail
+    email_pat = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
+    if (check_email.match?(email_pat))
+      email = check_email
+    else
+      puts "Warning : Invalid email Address | Please enter valid one"
+    end
+    print "Enter Department:"; department = gets.chomp
+    print "Enter Present: (0/1) "; check_present = gets.chomp.to_i
+    #check if input Present is TINYINT
+    if (check_present == 0 || check_present == 1)
+      present = check_present
+    else
+      puts "\nWarning : Present must be either 0(Present) or 1(Absent) | Value maynot be inserted\n\n"
+    end
+    print "Enter Pin: "; pin = gets.chomp.to_i
+    @client_method.insert_employee(new_emp_id, name, address, email, department, present, pin);  #database_connect
+
+    # puts "!!! Employee id #{new_emp_id} Name: #{name} !!!"
     run_again
   end
 
@@ -203,22 +218,22 @@ class Attendance
 
     if @update_set.include?(update)
       print "What do You want to update ? : "
-      puts "\n1.Employee Id\n\n2.Employee Name\n\n3. Adress\n\n4. Phone Number\n\n5. Department\n\n6. Present"
+      puts "\n\t1.Employee Id\n\n\t2.Employee Name\n\n\t3. Adress\n\n\t4. Email Address\n\n\t5. Department\n\n\t6. Present"
       print ("Enter Your Selection (1/2/3/4/5/6): ")
       action = gets.chomp.to_i
       case action
       when 1
         column = "emp_id"
       when 2
-        column = "Name"
+        column = "name"
       when 3
-        column = "Address"
+        column = "address"
       when 4
-        column = "Phone"
+        column = "email"
       when 5
-        column = "Department"
+        column = "department"
       when 6
-        column = "Present"
+        column = "present"
       else
         puts "Invalid Selection"
         run_again
