@@ -14,22 +14,6 @@ class Attendance
     end
   end
 
-  #terminating on user input only
-  def run_again
-    print "Continue (Y/y)? or Check Account list (A/a) : "
-    choice = gets.chomp.downcase
-    if (choice == "y")
-      access
-    elsif (choice == "a")
-      list
-      sleep(2) #program waits for 2 seconds
-      access
-    else
-      puts "TERMINATED"
-      exit
-    end
-  end
-
   #checks if account is in database
   def account_check
     #array for CRUD operation (update & delete)
@@ -82,7 +66,7 @@ class Attendance
 
   #CRUD oprations for Employee if Account & Pin Matched
   def access
-    puts "\n1.List of Employees\n\n2. List employees Pin\n\n3. List employees Time\n\n4. Add Employees\n\n5. Update Employee Information\n\n6. Delete Employee\n\n7. Exit"
+    puts "\n1.List of Employees\n\n2. List employees Pin\n\n3. List employees Time\n\n4. Search for Employee\n\n5. Add Employees\n\n6. Update Employee Information\n\n7. Delete Employee\n\n8. Exit"
     print ("Enter Your Selection (1/2/3/4/5/6): ")
     action = gets.chomp.to_i
     case action
@@ -93,19 +77,34 @@ class Attendance
     when 3
       list_employee_time
     when 4
-      insert
+      search
     when 5
-      update
+      insert
     when 6
-      delete
+      update
     when 7
-      binding.pry
-      Database.close_con
-      binding.pry
+      delete
+    when 8
       exit
     else
       puts "Invalid Selection"
       run_again
+    end
+  end
+ 
+  #terminating on user input only
+  def run_again
+    print "Continue (Y/y)? or Check Account list (A/a) : "
+    choice = gets.chomp.downcase
+    if (choice == "y")
+      access
+    elsif (choice == "a")
+      list
+      sleep(2) #program waits for 2 seconds
+      access
+    else
+      puts "TERMINATED"
+      exit
     end
   end
 
@@ -123,7 +122,6 @@ class Attendance
       @update_set << row["emp_id"]
     end
     puts ("Employee List")
-
     puts "|Employee ID \t|\t Name \t|\t Address \t|\t Phone \t\t\t|\t Department \t| \t Present \t|"
     puts "-----------------------------------------------------------------------------------------------------------------------------------------"
     @result_set.each_with_index do |value, index|
@@ -132,6 +130,26 @@ class Attendance
     end
     run_again
   end
+
+  #Searching for certain employee by name
+  def search
+    print ("Enter Employee name to search: "); search = gets.chomp
+    puts ("Employee List with Search value: #{search}")
+    flag = 0
+    puts "|Employee ID \t|\t Name \t|\t Address \t|\t Phone \t\t\t|\t Department \t| \t Present \t|"
+    puts "-----------------------------------------------------------------------------------------------------------------------------------------"
+    @result_set.each_with_index do |value, index|
+      if value["name"].casecmp(search)==0
+        print "|\t #{value["emp_id"]} \t|\t #{value["name"]} \t|\t #{value["address"]} \t|\t #{value["phone"]} \t|\t #{value["department"]} \t|\t #{value["present"]} \t\t|"
+        print "\n"
+      flag+=1
+    end
+  end
+    if flag==0
+      puts "No Employee found with Name: #{search}"
+    end
+    run_again
+  end  
 
   #listing employee_pin from Admin account
   def list_pin
