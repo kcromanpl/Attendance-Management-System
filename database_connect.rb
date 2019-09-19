@@ -5,6 +5,9 @@ class Database
   def self.create_con
     Mysql2::Client.new(:host => "localhost", :username => "Roman", :password => "Roman123", :database => "employees_reports")
   end
+  # def self.close_con
+  #   Database.create_con.close
+  # end
 
   def initialize
     begin
@@ -21,7 +24,7 @@ class Database
       #table - employees_pin
       @client.query("
         CREATE TABLE IF NOT EXISTS employees_pin(
-        pin_id INT PRIMARY KEY,
+        pin_id INT AUTO_INCREMENT PRIMARY KEY,
         emp_id INT NOT NULL,
         pin INT(4),
         FOREIGN KEY(emp_id) REFERENCES employees(emp_id) ON DELETE CASCADE ON UPDATE CASCADE )
@@ -29,7 +32,7 @@ class Database
       #table - employees_time
       @client.query("
       CREATE TABLE IF NOT EXISTS employees_time(
-        time_id INT PRIMARY KEY,
+        time_id INT AUTO_INCREMENT PRIMARY KEY,
         emp_id INT NOT NULL,
         date DATE,
         arrival_time DATETIME,

@@ -44,7 +44,7 @@ class Attendance
       puts e.message
     end
 
-    puts "\nWELCOME !!! RUBY ATTENDANCE MANAGEMENT SYSTEM !!!"
+    puts "\nWELCOME !!! RUBY ATTENDANCE MANAGEMENT SYSTEM !!!\n"
     print("Enter Your Account number: ")
     @emp_id = gets.chomp.to_i
     if (@update_set.include?(@emp_id))
@@ -68,12 +68,12 @@ class Attendance
     end
     print ("Enter your PIN: ")
     pin_number = gets.chomp.to_i
-    if (pin_number == @pin && @emp_id == 0)
-      print ("\nAdmin Account - PIN Matched\n")
+    if (pin_number == @pin && @emp_id == 1)
+      print ("\n !!! ADMIN ACCOUNT - PIN MATCHED !!!\n\n")
       access
     elsif (pin_number == @pin)
-      print ("\nEmployee Account - PIN Matched\n")
-      @empclass.emp_choose(@pin, @emp_id)
+      print ("\n!!! EMPLOYEE ACCOUNT - PIN MATCHED !!!\n\n")
+      @empclass.emp_choose(@pin, @emp_id) #empolyee.rb
     else
       print ("\nPIN : No Match\n")
       pin_check
@@ -99,6 +99,9 @@ class Attendance
     when 6
       delete
     when 7
+      binding.pry
+      Database.close_con
+      binding.pry
       exit
     else
       puts "Invalid Selection"
@@ -171,14 +174,17 @@ class Attendance
   #inserting Employee details in the information
   def insert
     puts "Enter Employee Details"
-    print "Enter Employee ID: "; @emp_id = gets.chomp.to_i
+    print "Enter Employee ID: "; new_emp_id = gets.chomp.to_i
     print "Enter Name "; name = gets.chomp
     print "Enter Address "; address = gets.chomp
     print "Enter Phone "; phone = gets.chomp
     print "Enter Department "; department = gets.chomp
     print "Enter Present (0/1) "; present = gets.chomp.to_i
+    print "Enter Pin "; pin = gets.chomp.to_i
     begin
-      @client.query("INSERT INTO employees VALUES('#{@emp_id}','#{name}','#{address}','#{phone}','#{department}','#{present}') ")
+      # binding.pry
+      @client.query("INSERT INTO employees VALUES('#{new_emp_id}','#{name}','#{address}','#{phone}','#{department}','#{present}') ")
+      @client.query("INSERT INTO employees_pin VALUES(7,'#{new_emp_id}','#{pin}') ")
     rescue => e
       puts "Insert Failed - Database Error!"
       puts e.message

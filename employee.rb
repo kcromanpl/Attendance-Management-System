@@ -13,29 +13,28 @@ class Employee
     @emp_id = emp_id
 
     puts "Employee Attendance Sheet"
-    print "Login(0) / Logout(1) : "; emp_out = gets.chomp.to_i
+    print "Login(1) / Logout(2) : "; emp_out = gets.chomp.to_i
     case emp_out
-    when 0
-      login
     when 1
+      login
+    when 2
       logout
     else
       puts "Invalid Selection"
+      emp_choose(pin, emp_id)
     end
   end
 
   #login time for employee
   def login
-    @emp_time_set = @client.query("SELECT * FROM employees_time")
+    # @emp_time_set = @client.query("SELECT * FROM employees_time")
 
     puts "Employee ID: #{@emp_id}"
-    print "Enter Time ID: "; time_id = gets.chomp.to_i
-
     date = Date.today
     arrival = Time.now
     arrival_time = arrival.strftime("%Y-%m-%d %H:%M:%S")
     begin
-      @client.query("INSERT INTO employees_time(time_id,emp_id,date,arrival_time) values(#{time_id},#{@emp_id},'#{date}','#{arrival_time}')")
+      @client.query("INSERT INTO employees_time(emp_id,date,arrival_time) values(#{@emp_id},'#{date}','#{arrival_time}')")
       puts "** SUCCESS : Employee id: #{@emp_id} | Arrival time #{arrival_time} ***"
     rescue => e
       puts "INSERT UNSUCCESSFUL - DATABASE ERROR"
