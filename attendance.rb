@@ -82,19 +82,23 @@ class Attendance
 
   #CRUD oprations for Employee if Account & Pin Matched
   def access
-    puts "\n1.List of Employees\n\n2. Add Employees\n\n3. Update Employee Information\n\n4. Delete Employee\n\n5. Exit"
-    print ("Enter Your Selection (1/2/3/4/5): ")
+    puts "\n1.List of Employees\n\n2. List employees Pin\n\n3. List employees Time\n\n4. Add Employees\n\n5. Update Employee Information\n\n6. Delete Employee\n\n7. Exit"
+    print ("Enter Your Selection (1/2/3/4/5/6): ")
     action = gets.chomp.to_i
     case action
     when 1
       list
     when 2
-      insert
+      list_pin
     when 3
-      update
+      list_employee_time
     when 4
-      delete
+      insert
     when 5
+      update
+    when 6
+      delete
+    when 7
       exit
     else
       puts "Invalid Selection"
@@ -121,6 +125,44 @@ class Attendance
     puts "-----------------------------------------------------------------------------------------------------------------------------------------"
     @result_set.each_with_index do |value, index|
       print "|\t #{value["emp_id"]} \t|\t #{value["name"]} \t|\t #{value["address"]} \t|\t #{value["phone"]} \t|\t #{value["department"]} \t|\t #{value["present"]} \t\t|"
+      print "\n"
+    end
+    run_again
+  end
+
+  #listing employee_pin from Admin account
+  def list_pin
+    begin
+      @emp_pin_set = @client.query("SELECT * FROM employees_pin")
+    rescue => e
+      puts "Listing Failed - Database Error"
+      puts e.message
+    end
+    puts ("Employee Pin List")
+
+    puts "|Employee ID \t|\t Pin \t|"
+    puts "---------------------------------"
+    @emp_pin_set.each_with_index do |value, index|
+      print "|\t #{value["emp_id"]} \t|\t #{value["pin"]} \t|"
+      print "\n"
+    end
+    run_again
+  end
+
+  #listing employee_pin from Admin account
+  def list_employee_time
+    begin
+      @emp_pin_set = @client.query("SELECT * FROM employees_time")
+    rescue => e
+      puts "Listing Failed - Database Error"
+      puts e.message
+    end
+    puts ("Employee Time List")
+
+    puts "|\tTime ID|\tEmployee ID|\tDate \t\t|\t\t Arrival Time\t\t|\t\tDepart Time\t\t|"
+    puts "---------------------------------"
+    @emp_pin_set.each_with_index do |value, index|
+      print "|\t #{value["time_id"]} \t|\t #{value["emp_id"]} \t|\t #{value["date"]} \t|\t #{value["arrival_time"]} \t|\t #{value["depart_time"]} \t|"
       print "\n"
     end
     run_again
