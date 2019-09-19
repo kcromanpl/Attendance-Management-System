@@ -26,6 +26,16 @@ class Attendance
            pin INT(4),
            FOREIGN KEY(emp_id) REFERENCES employees(emp_id) ON DELETE CASCADE ON UPDATE CASCADE )
            ")
+          #table - employees_time
+         @client.query("
+          CREATE TABLE IF NOT EXISTS employees_time(
+            time_id INT PRIMARY KEY,
+            emp_id INT NOT NULL,
+            date DATE,
+            arrival_time DATETIME,
+            depart_time DATETIME,
+            FOREIGN KEY(emp_id) REFERENCES employees(emp_id) on delete cascade on update cascade)
+            ")
      rescue => e
        puts "Error connecting to database"
        puts e.message
@@ -92,7 +102,6 @@ class Attendance
         elsif (pin_number == @pin)
           print ("\nEmployee Account - PIN Matched\n")
           @empclass.emp_choose(@pin,@emp_id)
-          puts "Employee Function"
         else
           print ("\nPIN : No Match\n")
           pin_check
