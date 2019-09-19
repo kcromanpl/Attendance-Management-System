@@ -34,10 +34,15 @@ class Employee
     date = Date.today
     arrival = Time.now
     arrival_time = arrival.strftime("%Y-%m-%d %H:%M:%S")
-    @client.query("INSERT INTO employees_time(time_id,emp_id,date,arrival_time) values(#{time_id},#{@emp_id},'#{date}','#{arrival_time}')")
-    puts "** SUCCESS ***"
-    #only true if function is executed
-    @checkvar = true
+    begin
+      @client.query("INSERT INTO employees_time(time_id,emp_id,date,arrival_time) values(#{time_id},#{@emp_id},'#{date}','#{arrival_time}')")
+      puts "** SUCCESS ***"
+      #only true if function is executed
+      @checkvar = true
+    rescue => e
+      puts "INSERT UNSUCCESSFUL - DATABASE ERROR"
+      puts e.message
+    end 
   end   
   
   def logout
@@ -47,13 +52,15 @@ class Employee
     date = Date.today
     depart = Time.now
     depart_time = depart.strftime("%Y-%m-%d %H:%M:%S")
-    @client.query("UPDATE employees_time SET depart_time ='#{depart_time}' WHERE emp_id = '#{emp_id}'")
-    puts "** SUCCESS ***"
+    begin
+      @client.query("UPDATE employees_time SET depart_time ='#{depart_time}' WHERE emp_id = '#{emp_id}'")
+      puts "*** SUCCESS ***"
+    rescue => e
+      puts "INSERT UNSUCCESSFUL - DATABASE ERROR"
+      puts e.message
+    end
     else
       puts "Login Entry Not Found"
     end
   end 
 end #end_of_class
-
-# e = Employee.new
-# e.insert
