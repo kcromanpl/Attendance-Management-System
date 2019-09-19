@@ -3,9 +3,9 @@ require "pry"
 
 class Database
   #creating connection
-  def self.create_con
-    Mysql2::Client.new(:host => "localhost", :username => "Roman", :password => "Roman123", :database => "employees_reports")
-  end
+  # def self.create_con
+  #   Mysql2::Client.new(:host => "localhost", :username => "Roman", :password => "Roman123", :database => "employees_reports")
+  # end
   # def self.close_con
   #   Database.create_con.close
   # end
@@ -44,6 +44,27 @@ class Database
       puts "Error connecting to database"
       puts e.message
     end
+  end
+
+  #account_check
+  def account_check_employee
+    begin
+      result_set = @client.query("SELECT * FROM employees")
+    rescue => e
+      puts "Account Check Failed - Database Error!"
+      puts e.message
+    end
+  end
+
+  #pin_check
+  def pin_check_employee(emp_id)
+    begin
+      pin_set = @client.query("SELECT pin FROM employees_pin where emp_id = '#{emp_id}' ") 
+    rescue => e
+      puts "Pin check failed - Database Error !!"
+      e.message
+    end
+  end
 
   #listing the employee records
   def list_employee
@@ -64,7 +85,7 @@ class Database
       puts e.message
     end
   end
-  
+
   #listing the employee records
   def list_time_employee
     begin
@@ -73,10 +94,10 @@ class Database
       puts "Listing Failed - Database Error"
       puts e.message
     end
-  end  
+  end
 
   #inserting Employee details in the information
-  def insert_employee(new_emp_id,name,address,phone,department,present,pin)
+  def insert_employee(new_emp_id, name, address, phone, department, present, pin)
     begin
       @client.query("INSERT INTO employees VALUES('#{new_emp_id}','#{name}','#{address}','#{phone}','#{department}','#{present}') ")
       @client.query("INSERT INTO employees_pin(emp_id,pin)  VALUES('#{new_emp_id}','#{pin}') ")
@@ -89,11 +110,11 @@ class Database
 
   #Deleting Employee records
   def delete_employee(delete)
-      @client.query("DELETE FROM employees where emp_id = '#{delete}'")
+    @client.query("DELETE FROM employees where emp_id = '#{delete}'")
   end
 
   #Updating Employee records
-  def update_employee(column,value,update)
+  def update_employee(column, value, update)
     begin
       @client.query("UPDATE employees SET #{column} = '#{value}' WHERE emp_id = '#{update}'")
     rescue => e
@@ -102,5 +123,16 @@ class Database
     end
   end
 
+  #employee.rb
+
+  def login_employee(emp_id,date,arrival_time)
+    begin
+      @client.query("INSERT INTO employees_time(emp_id,date,arrival_time) values(#{emp_id},'#{date}','#{arrival_time}')")
+    rescue => e
+      puts "INSERT UNSUCCESSFUL - DATABASE ERROR"
+      puts e.message
+    end
   end
+
+
 end #end_of_class

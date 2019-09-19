@@ -3,9 +3,9 @@ require "pry"
 require "./database_connect"
 
 class Employee
-  def initialize(client)
+  def initialize()
     #initializing database connection
-    @client = client
+    @client = Database.new
   end
 
   #choosing employee login or logout
@@ -32,13 +32,10 @@ class Employee
     date = Date.today
     arrival = Time.now
     arrival_time = arrival.strftime("%Y-%m-%d %H:%M:%S")
-    begin
-      @client.query("INSERT INTO employees_time(emp_id,date,arrival_time) values(#{@emp_id},'#{date}','#{arrival_time}')")
-      puts "** SUCCESS : Employee id: #{@emp_id} | Arrival time #{arrival_time} ***"
-    rescue => e
-      puts "INSERT UNSUCCESSFUL - DATABASE ERROR"
-      puts e.message
-    end
+
+    @client.login_employee(@emp_id,date,arrival_time) #database_connect
+    
+    puts "** SUCCESS : Employee id: #{@emp_id} | Arrival time #{arrival_time} ***"  
   end
 
   #logout section for employee

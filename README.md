@@ -6,7 +6,7 @@
 
 ## Description
 
-## Technologies used
+## Technologies | Frameworks used
 	Ruby | Mysql2 | pry 
 
 ## List of Tables

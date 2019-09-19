@@ -6,9 +6,9 @@ class Attendance
   def initialize
     #initializes the Mysql connection
     begin
-      @client = Database.create_con
+      # @client = Database.create_con
       @client_method = Database.new
-      @empclass = Employee.new(@client)
+      @empclass = Employee.new
     rescue => e
       puts "Error connecting to database"
       puts e.message
@@ -17,17 +17,11 @@ class Attendance
 
   #checks if account is in database
   def account_check
-    begin
-      @result_set = @client.query("SELECT * FROM employees")
-
-      #array for CRUD operation (update & delete)
-      @update_set = Array.new
-      @result_set.each do |row|
-        @update_set << row["emp_id"]
-      end
-    rescue => e
-      puts "Account Check Failed - Database Error!"
-      puts e.message
+    @result_set = @client_method.account_check_employee   #database_connect
+    #array for CRUD operation (update & delete)
+    @update_set = Array.new
+    @result_set.each do |row|
+      @update_set << row["emp_id"]
     end
 
     puts "\nWELCOME !!! RUBY ATTENDANCE MANAGEMENT SYSTEM !!!\n"
@@ -43,14 +37,9 @@ class Attendance
 
   #checks if pin matches the database
   def pin_check
-    begin
-      @pin_set = @client.query("SELECT pin FROM employees_pin where emp_id = '#{@emp_id}' ")
-      @pin_set.each do |i|
-        @pin = i["pin"]
-      end
-    rescue => e
-      puts "Pin check failed - Database Error !!"
-      e.message
+   pin_set =  @client_method.pin_check_employee(@emp_id)
+    pin_set.each do |i|
+      @pin = i["pin"]
     end
     print ("Enter your PIN: ")
     pin_number = gets.chomp.to_i
@@ -188,7 +177,7 @@ class Attendance
     print "Enter Department "; department = gets.chomp
     print "Enter Present (0/1) "; present = gets.chomp.to_i
     print "Enter Pin "; pin = gets.chomp.to_i
-    @client_method.insert_employee(new_emp_id,name,address,phone,department,present,pin); #database_connect
+    @client_method.insert_employee(new_emp_id, name, address, phone, department, present, pin);  #database_connect
     run_again
   end
 
@@ -235,7 +224,7 @@ class Attendance
         run_again
       end
       print "Enter the New value : "; value = gets.chomp
-      @client_method.update_employee(column,value,update) #database_conect
+      @client_method.update_employee(column, value, update) #database_conect
       puts "Employee '#{update}' Updated"
       run_again
     else
