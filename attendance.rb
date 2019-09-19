@@ -1,12 +1,13 @@
 require 'mysql2'
 require './database_connect'
-# require './employee'
+require './employee'
 
 class Attendance
   def initialize
     #initializes the Mysql connection 
      begin
        @client =   Database.create_con
+       @empclass = Employee.new(@client)
        #table - employees 
        @client.query("
          CREATE TABLE IF NOT EXISTS employees(
@@ -85,12 +86,12 @@ class Attendance
     end
     print ("Enter your PIN: ")
         pin_number = gets.chomp.to_i
-        if (pin_number == @pin && @emp_id == 1)
+        if (pin_number == @pin && @emp_id == 0)
           print ("\nAdmin Account - PIN Matched\n")
           access
         elsif (pin_number == @pin)
           print ("\nEmployee Account - PIN Matched\n")
-          # @emp.emp_choose(@pin,@emp_id)
+          @empclass.emp_choose(@pin,@emp_id)
           puts "Employee Function"
         else
           print ("\nPIN : No Match\n")
@@ -100,8 +101,8 @@ class Attendance
 
   #CRUD oprations for Employee if Account & Pin Matched
   def access
-    puts "\n1.List of Employees\n\n2. Add Employees\n\n3. Update Employee Information\n\n4. Delete Employee"
-    print ("Enter Your Selection (1/2/3/4): ")
+    puts "\n1.List of Employees\n\n2. Add Employees\n\n3. Update Employee Information\n\n4. Delete Employee\n\n5. Exit"
+    print ("Enter Your Selection (1/2/3/4/5): ")
     action = gets.chomp.to_i
       case action
         when 1
@@ -112,6 +113,8 @@ class Attendance
           update
         when 4
           delete
+        when 5
+          exit
         else
           puts "Invalid Selection"
           run_again
