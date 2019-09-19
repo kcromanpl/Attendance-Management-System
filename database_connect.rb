@@ -2,6 +2,7 @@ require "mysql2"
 require "pry"
 
 class Database
+  #creating connection
   def self.create_con
     Mysql2::Client.new(:host => "localhost", :username => "Roman", :password => "Roman123", :database => "employees_reports")
   end
@@ -44,8 +45,4 @@ class Database
       puts e.message
     end
   end
-
-  def list_employees
-    @result_set = @client.query("SELECT * FROM employees")
-  end
-end
+end #end_of_class

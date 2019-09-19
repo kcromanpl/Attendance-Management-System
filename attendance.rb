@@ -16,9 +16,10 @@ class Attendance
 
   #checks if account is in database
   def account_check
-    #array for CRUD operation (update & delete)
     begin
       @result_set = @client.query("SELECT * FROM employees")
+
+      #array for CRUD operation (update & delete)
       @update_set = Array.new
       @result_set.each do |row|
         @update_set << row["emp_id"]
@@ -52,6 +53,8 @@ class Attendance
     end
     print ("Enter your PIN: ")
     pin_number = gets.chomp.to_i
+
+    #checks for Admin or Employee Account
     if (pin_number == @pin && @emp_id == 1)
       print ("\n !!! ADMIN ACCOUNT - PIN MATCHED !!!\n\n")
       access
@@ -91,7 +94,7 @@ class Attendance
       run_again
     end
   end
- 
+
   #terminating on user input only
   def run_again
     print "Continue (Y/y)? or Check Account list (A/a) : "
@@ -110,13 +113,13 @@ class Attendance
 
   #listing the Employee information in the database
   def list
-    #array for CRUD operation (update & delete)
     begin
       @result_set = @client.query("SELECT * FROM employees")
     rescue => e
       puts "Listing Failed - Database Error"
       puts e.message
     end
+    #array for CRUD operation (update & delete)
     @update_set = Array.new
     @result_set.each do |row|
       @update_set << row["emp_id"]
@@ -139,17 +142,17 @@ class Attendance
     puts "|Employee ID \t|\t Name \t|\t Address \t|\t Phone \t\t\t|\t Department \t| \t Present \t|"
     puts "-----------------------------------------------------------------------------------------------------------------------------------------"
     @result_set.each_with_index do |value, index|
-      if value["name"].casecmp(search)==0
+      if value["name"].casecmp(search) == 0
         print "|\t #{value["emp_id"]} \t|\t #{value["name"]} \t|\t #{value["address"]} \t|\t #{value["phone"]} \t|\t #{value["department"]} \t|\t #{value["present"]} \t\t|"
         print "\n"
-      flag+=1
+        flag += 1
+      end
     end
-  end
-    if flag==0
+    if flag == 0
       puts "No Employee found with Name: #{search}"
     end
     run_again
-  end  
+  end
 
   #listing employee_pin from Admin account
   def list_pin

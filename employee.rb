@@ -1,6 +1,6 @@
 require "mysql2"
-require "./database_connect"
 require "pry"
+require "./database_connect"
 
 class Employee
   def initialize(client)
@@ -8,6 +8,7 @@ class Employee
     @client = client
   end
 
+  #choosing employee login or logout
   def emp_choose(pin, emp_id)
     @pin = pin
     @emp_id = emp_id
@@ -25,10 +26,8 @@ class Employee
     end
   end
 
-  #login time for employee
+  #login section for employee
   def login
-    # @emp_time_set = @client.query("SELECT * FROM employees_time")
-
     puts "Employee ID: #{@emp_id}"
     date = Date.today
     arrival = Time.now
