@@ -4,10 +4,33 @@
 ## Motivation
 	Attendance Management System was developed in order to solve the daily management of employees in projects & companies. It is very useful to test its employee attendance continuously for mutual development of both employee and the company.
 
-## Description
-
 ## Technologies | Frameworks used
-	Ruby | Mysql2 | pry 
+	Ruby| Git | Mysql2 | pry 
+
+## Features
+
+### 1. Admin Account
+	1. List of Employees
+
+	2. List employees Pin
+
+	3. List employees Time
+
+	4. Search for Employee
+
+	5. Add Employees
+
+	6. Update Employee Information
+
+	7. Delete Employee
+
+	8. Exit
+
+### 2. Employee Account
+
+	1. Login
+
+	2. Logout
 
 ## List of Tables
 

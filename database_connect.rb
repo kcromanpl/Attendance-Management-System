@@ -5,36 +5,45 @@ class Database
   def initialize
     begin
       @client = Mysql2::Client.new(:host => "localhost", :username => "Roman", :password => "Roman123", :database => "employees_reports")
+    rescue => e
+      puts "CONNECTION UNSUCCESSFUL - DATABASE ERROR"
+      puts e.message
+    end
+  end
+
+  #create_table
+  def create_table
+    begin
       #table - employees
       @client.query("
-      CREATE TABLE IF NOT EXISTS employees(
-      emp_id INT PRIMARY KEY,
-      name VARCHAR(30) NOT NULL, 
-      address VARCHAR(30) NOT NULL, 
-      email VARCHAR(20) NOT NULL UNIQUE, 
-      department VARCHAR(20) NOT NULL, 
-      present TINYINT(1) NOT NULL)
-      ")
+          CREATE TABLE IF NOT EXISTS employees(
+          emp_id INT PRIMARY KEY,
+          name VARCHAR(30) NOT NULL, 
+          address VARCHAR(30) NOT NULL, 
+          email VARCHAR(20) NOT NULL UNIQUE, 
+          department VARCHAR(20) NOT NULL,
+          present TINYINT(1) NOT NULL)
+          ")
       #table - employees_pin
       @client.query("
-        CREATE TABLE IF NOT EXISTS employees_pin(
-        pin_id INT AUTO_INCREMENT PRIMARY KEY,
-        emp_id INT NOT NULL,
-        pin INT(4),
-        FOREIGN KEY(emp_id) REFERENCES employees(emp_id) ON DELETE CASCADE ON UPDATE CASCADE )
-        ")
+            CREATE TABLE IF NOT EXISTS employees_pin(
+            pin_id INT AUTO_INCREMENT PRIMARY KEY,
+            emp_id INT NOT NULL,
+            pin INT(4),
+            FOREIGN KEY(emp_id) REFERENCES employees(emp_id) ON DELETE CASCADE ON UPDATE CASCADE )
+            ")
       #table - employees_time
       @client.query("
-      CREATE TABLE IF NOT EXISTS employees_time(
-        time_id INT AUTO_INCREMENT PRIMARY KEY,
-        emp_id INT NOT NULL,
-        date DATE,
-        arrival_time DATETIME,
-        depart_time DATETIME,
-        FOREIGN KEY(emp_id) REFERENCES employees(emp_id) on delete cascade on update cascade)
-        ")
+          CREATE TABLE IF NOT EXISTS employees_time(
+            time_id INT AUTO_INCREMENT PRIMARY KEY,
+            emp_id INT NOT NULL,
+            date DATE,
+            arrival_time DATETIME,
+            depart_time DATETIME,
+            FOREIGN KEY(emp_id) REFERENCES employees(emp_id) on delete cascade on update cascade)
+            ")
     rescue => e
-      puts "Error connecting to database"
+      puts "TABLE CREATION UNSUCCESSFUL : DATABASE ERROR"
       puts e.message
     end
   end
@@ -62,7 +71,7 @@ class Database
   #listing the employee records
   def list_employee
     begin
-      @result_set = @client.query("SELECT * FROM employees ORDER BY emp_id")
+      result_set = @client.query("SELECT * FROM employees ORDER BY emp_id")
     rescue => e
       puts "INSERT UNSUCCESSFUL - DATABASE ERROR"
       puts e.message
@@ -146,6 +155,16 @@ class Database
       puts "** SUCCESS : Employee id: #{emp_id} | Departure time #{depart_time} ***"
     rescue => e
       puts "EMPLOYEES LOGOUT UNSUCCESSFUL - DATABASE ERROR"
+      puts e.message
+    end
+  end
+
+  #closing_connection
+  def close_con
+    begin
+      @client.close_con
+    rescue => e
+      puts "ERROR : DATABASE CLOSING UNSUCCESSFUL"
       puts e.message
     end
   end

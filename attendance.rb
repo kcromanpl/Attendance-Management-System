@@ -60,7 +60,7 @@ class Attendance
   #CRUD oprations for Employee if Account & Pin Matched
   def access
     puts "\t1.List of Employees\n\n\t2. List employees Pin\n\n\t3. List employees Time\n\n\t4. Search for Employee\n\n\t5. Add Employees\n\n\t6. Update Employee Information\n\n\t7. Delete Employee\n\n\t8. Exit\n\n"
-    print ("Enter Your Selection (1/2/3/4/5/6): ")
+    print ("Enter Your Selection (1/2/3/4/5/6/7/8): ")
     action = gets.chomp.to_i
     case action
     when 1
@@ -79,6 +79,7 @@ class Attendance
       delete
     when 8
       exit
+      @client_method.close_con
     else
       puts "Invalid Selection"
       run_again
@@ -98,17 +99,13 @@ class Attendance
     else
       puts "TERMINATED"
       exit
+      @client_method.close_con
     end
   end
 
   #listing the Employee information in the database
   def list
-    @client_method.list_employee
-    #array for CRUD operation (update & delete)
-    @update_set = Array.new
-    @result_set.each do |row|
-      @update_set << row["emp_id"]
-    end
+    @result_set = @client_method.list_employee
     puts ("Employee List")
     puts "|Employee ID \t|\t Name \t|\t Address \t|\t Email \t\t\t|\t Department \t| \t Present \t|"
     puts "-----------------------------------------------------------------------------------------------------------------------------------------"
@@ -169,6 +166,7 @@ class Attendance
 
   #inserting Employee details in the information
   def insert
+    valid = 1
     puts "Enter Employee Details"
     print "Enter Employee ID: "; new_emp_id = gets.chomp.to_i
     print "Enter Name: "; name = gets.chomp
@@ -179,6 +177,7 @@ class Attendance
     if (check_email.match?(email_pat))
       email = check_email
     else
+      valid = 0
       puts "Warning : Invalid email Address | Please enter valid one"
     end
     print "Enter Department:"; department = gets.chomp
@@ -187,12 +186,16 @@ class Attendance
     if (check_present == 0 || check_present == 1)
       present = check_present
     else
+      valid = 0
       puts "\nWarning : Present must be either 0(Present) or 1(Absent) | Value maynot be inserted\n\n"
     end
     print "Enter Pin: "; pin = gets.chomp.to_i
-    @client_method.insert_employee(new_emp_id, name, address, email, department, present, pin);  #database_connect
-
-    # puts "!!! Employee id #{new_emp_id} Name: #{name} !!!"
+    if (valid == 1)
+      @client_method.insert_employee(new_emp_id, name, address, email, department, present, pin);  #database_connect
+      puts "\nNEW EMPLOYEE ID #{new_emp_id} INSERTED\n"
+    else
+      puts "Error in data entry, enter valid one"
+    end
     run_again
   end
 
@@ -219,7 +222,7 @@ class Attendance
     if @update_set.include?(update)
       print "What do You want to update ? : "
       puts "\n\t1.Employee Id\n\n\t2.Employee Name\n\n\t3. Adress\n\n\t4. Email Address\n\n\t5. Department\n\n\t6. Present"
-      print ("Enter Your Selection (1/2/3/4/5/6): ")
+      print ("Enter Your Selection (1/2/3/4/5/6/7/8): ")
       action = gets.chomp.to_i
       case action
       when 1
@@ -249,6 +252,6 @@ class Attendance
   end
 end #end_of_class
 
-Database.new
+# Database.new
 a = Attendance.new
 a.account_check
